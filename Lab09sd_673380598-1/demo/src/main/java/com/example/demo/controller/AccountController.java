@@ -1,0 +1,44 @@
+package com.example.demo.controller;
+
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.model.Account;
+import com.example.demo.model.DepositTransaction;
+import com.example.demo.service.AccountService;
+import com.example.demo.service.DepositService;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.RequestParam;
+
+
+
+@RestController
+public class AccountController {
+    private final AccountService accountService;
+    private final DepositService depositService;
+
+    public AccountController(AccountService accountService,DepositService depositService){
+        this.accountService = accountService;
+        this.depositService = depositService;
+    }
+
+    @PostMapping("/accounts")
+    public Account CreateAccount(@RequestBody Account account) {
+        accountService.createAccount(account);
+        return account;
+    }
+    
+    @PostMapping("/accounts/{id}/deposit")
+    public String deposit(@PathVariable Long id ,@RequestBody DepositTransaction depositTransaction) {
+        depositService.deposit(id,depositTransaction.getAmount());
+        return "Deposit successful";
+    }
+    
+    @GetMapping("/accounts/{id}")
+    public Account showBalance(@PathVariable Long id) {
+        return accountService.findAccountById(id);
+    }
+}
